@@ -1931,6 +1931,305 @@ body {
 }
 
 /* ============================================================
+   LOGIN / AUTH MODAL
+   ============================================================ */
+.login-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-smooth);
+}
+
+.login-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.login-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  z-index: 2001;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  width: 440px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.login-modal::-webkit-scrollbar { width: 4px; }
+.login-modal::-webkit-scrollbar-track { background: transparent; }
+.login-modal::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 4px; }
+
+.login-modal.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.login-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all var(--transition-fast);
+}
+
+.login-close:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-header h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.login-header h3 span {
+  color: var(--gold);
+}
+
+.login-header p {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.login-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-card);
+  border-radius: 100px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.login-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  text-align: center;
+}
+
+.login-tab:hover { color: var(--text-primary); }
+
+.login-tab.active {
+  background: var(--gold);
+  color: var(--bg-primary);
+  font-weight: 600;
+}
+
+.login-form {
+  margin-bottom: 8px;
+}
+
+.login-perks {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-top: 20px;
+}
+
+.login-perks h5 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.login-perk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 5px 0;
+}
+
+.login-perk span {
+  color: var(--gold);
+  font-size: 12px;
+}
+
+.login-guest-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.login-guest-link a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.login-guest-link a:hover {
+  text-decoration: underline;
+}
+
+/* Nav Member State */
+.nav-member {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.member-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-member-name {
+  font-size: 13px;
+  color: var(--text-primary) !important;
+  font-weight: 500;
+}
+
+/* Member Dropdown Menu */
+.member-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  min-width: 200px;
+  box-shadow: var(--shadow-elevated);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all var(--transition-fast);
+  z-index: 1001;
+}
+
+.member-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.member-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+.member-menu-item:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.member-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+
+.member-menu-item.logout {
+  color: var(--coral);
+}
+
+.member-menu-item.logout:hover {
+  background: rgba(232, 93, 74, 0.1);
+}
+
+/* Member Greeting in Booking Panel */
+.member-greeting {
+  background: rgba(200, 169, 110, 0.08);
+  border: 1px solid rgba(200, 169, 110, 0.2);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.member-greeting-badge {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--bg-primary);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.member-greeting p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.member-greeting p strong {
+  color: var(--gold-light);
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
@@ -1958,6 +2257,7 @@ body {
   .cal-events { flex-direction: row; gap: 4px; }
   .filter-controls { align-items: stretch; }
   .confirmation-card { padding: 32px 24px; }
+  .login-modal { padding: 28px 20px; }
 }
 </style>
 </head>
@@ -1973,8 +2273,22 @@ body {
   </a>
   <ul class="nav-links">
     <li><a href="#classes">Classes</a></li>
-    <li><a href="#chef">Our Chef</a></li>
+    <li><a href="#chef">Our Chefs</a></li>
     <li><a href="#experience">The Experience</a></li>
+    <li id="navSignIn"><a href="#" onclick="openLogin(event)">Sign In</a></li>
+    <li id="navMember" style="display: none; position: relative;">
+      <a href="#" class="nav-member" onclick="toggleMemberMenu(event)">
+        <div class="member-avatar" id="memberAvatarNav">JD</div>
+        <span class="nav-member-name" id="memberNameNav">Jane D.</span>
+      </a>
+      <div class="member-menu" id="memberMenu">
+        <button class="member-menu-item" onclick="closeMemberMenu()">&#9733; My Bookings</button>
+        <button class="member-menu-item" onclick="closeMemberMenu()">&#9825; Saved Classes</button>
+        <button class="member-menu-item" onclick="closeMemberMenu()">&#9881; Account Settings</button>
+        <div class="member-menu-divider"></div>
+        <button class="member-menu-item logout" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </li>
     <li><a href="#" class="nav-cta" onclick="scrollToClasses(event)">Book a Class</a></li>
   </ul>
 </nav>
@@ -2247,6 +2561,12 @@ body {
       </div>
     </div>
 
+    <!-- Member Greeting (shown when logged in) -->
+    <div class="member-greeting" id="memberGreeting" style="display: none;">
+      <div class="member-greeting-badge">&#9733; MEMBER</div>
+      <p>Welcome back, <strong id="memberGreetingName">Jane</strong>! Your 10% member discount has been applied.</p>
+    </div>
+
     <!-- Guest Info -->
     <div class="booking-form-section">
       <h5>Guest Information</h5>
@@ -2364,6 +2684,76 @@ body {
 </div>
 
 <!-- ============================================================
+     LOGIN / AUTH MODAL
+     ============================================================ -->
+<div class="login-backdrop" id="loginBackdrop" onclick="closeLogin()"></div>
+<div class="login-modal" id="loginModal">
+  <button class="login-close" onclick="closeLogin()">&times;</button>
+  <div class="login-header">
+    <h3>Welcome to <span>The Teaching Kitchen</span></h3>
+    <p>Sign in to access member perks and exclusive early booking.</p>
+  </div>
+  <div class="login-tabs">
+    <button class="login-tab active" data-tab="signin" onclick="switchLoginTab('signin')">Sign In</button>
+    <button class="login-tab" data-tab="signup" onclick="switchLoginTab('signup')">Create Account</button>
+  </div>
+
+  <!-- Sign In Form -->
+  <div class="login-form" id="signinForm">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-input" id="loginPassword" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer;">
+        <input type="checkbox" style="accent-color: var(--gold);"> Remember me
+      </label>
+      <a href="#" onclick="event.preventDefault()" style="font-size: 13px; color: var(--gold); text-decoration: none;">Forgot password?</a>
+    </div>
+    <button class="pay-btn" onclick="handleLogin()">Sign In</button>
+  </div>
+
+  <!-- Create Account Form -->
+  <div class="login-form" id="signupForm" style="display: none;">
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" class="form-input" id="signupFirstName" placeholder="Jane">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" class="form-input" id="signupLastName" placeholder="Doe">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-input" id="signupPassword" placeholder="Create a password">
+    </div>
+    <button class="pay-btn" onclick="handleSignup()">Create Account</button>
+  </div>
+
+  <!-- Member Perks -->
+  <div class="login-perks">
+    <h5>Member Perks</h5>
+    <div class="login-perk"><span>&#9733;</span> 10% off all classes</div>
+    <div class="login-perk"><span>&#9733;</span> Early access to new classes</div>
+    <div class="login-perk"><span>&#9733;</span> Free recipe collection</div>
+    <div class="login-perk"><span>&#9733;</span> Priority booking window</div>
+  </div>
+  <div class="login-guest-link">
+    No account? You can still <a href="#" onclick="closeLogin(); setTimeout(function(){ document.getElementById('classes').scrollIntoView({behavior:'smooth'}); }, 300); return false;">book as a guest</a>
+  </div>
+</div>
+
+<!-- ============================================================
      CONFIRMATION OVERLAY
      ============================================================ -->
 <div class="confirmation-overlay" id="confirmationOverlay">
@@ -2450,7 +2840,7 @@ const classes = [
     duration: "2 hours",
     price: 45,
     priceLabel: "per person",
-    image: "https://images.unsplash.com/photo-1566454419290-57a64afe21ab?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
     chef: chefProfiles.jamal,
     rating: 4.96,
     reviews: 64,
@@ -2668,6 +3058,111 @@ const classes = [
     calendarDays: [28, 29]
   }
 ];
+
+// ============================================================
+// AUTH / LOGIN STATE
+// ============================================================
+let isLoggedIn = false;
+let memberProfile = null;
+
+function openLogin(e) {
+  if (e) e.preventDefault();
+  document.getElementById('loginBackdrop').classList.add('active');
+  document.getElementById('loginModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLogin() {
+  document.getElementById('loginBackdrop').classList.remove('active');
+  document.getElementById('loginModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function switchLoginTab(tab) {
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.login-tab[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('signinForm').style.display = tab === 'signin' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+}
+
+function handleLogin() {
+  const email = document.getElementById('loginEmail').value || 'jane.doe@example.com';
+  // Mock login — extract name from email or use defaults
+  setLoggedIn('Jane', 'Doe', email);
+}
+
+function handleSignup() {
+  const firstName = document.getElementById('signupFirstName').value || 'Jane';
+  const lastName = document.getElementById('signupLastName').value || 'Doe';
+  const email = document.getElementById('signupEmail').value || 'jane.doe@example.com';
+  setLoggedIn(firstName, lastName, email);
+}
+
+function setLoggedIn(firstName, lastName, email) {
+  isLoggedIn = true;
+  memberProfile = { firstName, lastName, email };
+
+  // Update nav
+  document.getElementById('navSignIn').style.display = 'none';
+  document.getElementById('navMember').style.display = 'block';
+  document.getElementById('memberAvatarNav').textContent = firstName[0] + lastName[0];
+  document.getElementById('memberNameNav').textContent = firstName + ' ' + lastName[0] + '.';
+
+  // Close login modal
+  closeLogin();
+
+  // Show welcome toast
+  const toast = document.getElementById('successToast');
+  const toastStrong = toast.querySelector('.toast-text strong');
+  const toastSpan = toast.querySelector('.toast-text span');
+  toastStrong.textContent = 'Welcome, ' + firstName + '!';
+  toastSpan.textContent = 'You\'re signed in. Member perks are now active.';
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toastStrong.textContent = 'Reservation Confirmed!';
+    toastSpan.textContent = 'Check your email for confirmation details.';
+  }, 3500);
+}
+
+function toggleMemberMenu(e) {
+  e.preventDefault();
+  document.getElementById('memberMenu').classList.toggle('active');
+}
+
+function closeMemberMenu() {
+  document.getElementById('memberMenu').classList.remove('active');
+}
+
+function handleLogout() {
+  isLoggedIn = false;
+  memberProfile = null;
+  document.getElementById('navSignIn').style.display = 'block';
+  document.getElementById('navMember').style.display = 'none';
+  closeMemberMenu();
+
+  // Show logout toast
+  const toast = document.getElementById('successToast');
+  const toastStrong = toast.querySelector('.toast-text strong');
+  const toastSpan = toast.querySelector('.toast-text span');
+  toastStrong.textContent = 'Signed Out';
+  toastSpan.textContent = 'You can still book classes as a guest.';
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toastStrong.textContent = 'Reservation Confirmed!';
+    toastSpan.textContent = 'Check your email for confirmation details.';
+  }, 3000);
+}
+
+// Close member menu when clicking elsewhere
+document.addEventListener('click', (e) => {
+  const memberMenu = document.getElementById('memberMenu');
+  const navMember = document.getElementById('navMember');
+  if (memberMenu && navMember && !navMember.contains(e.target)) {
+    memberMenu.classList.remove('active');
+  }
+});
 
 // ============================================================
 // RENDER CLASSES (GRID VIEW)
@@ -2888,10 +3383,19 @@ function openBooking(classId) {
   // Reset upsell cards
   document.querySelectorAll('.upsell-card').forEach(card => card.classList.remove('selected'));
 
-  // Reset form inputs
-  document.getElementById('firstNameInput').value = '';
-  document.getElementById('lastNameInput').value = '';
-  document.getElementById('emailInput').value = '';
+  // Auto-fill for members or reset for guests
+  if (isLoggedIn && memberProfile) {
+    document.getElementById('firstNameInput').value = memberProfile.firstName;
+    document.getElementById('lastNameInput').value = memberProfile.lastName;
+    document.getElementById('emailInput').value = memberProfile.email;
+    document.getElementById('memberGreeting').style.display = 'flex';
+    document.getElementById('memberGreetingName').textContent = memberProfile.firstName;
+  } else {
+    document.getElementById('firstNameInput').value = '';
+    document.getElementById('lastNameInput').value = '';
+    document.getElementById('emailInput').value = '';
+    document.getElementById('memberGreeting').style.display = 'none';
+  }
 
   // Populate panel
   document.getElementById('panelThumb').src = currentClass.image;
@@ -2982,8 +3486,21 @@ function updateOrderSummary() {
     `;
   });
 
+  // Apply member discount
+  let finalTotal = baseTotal + addonsTotal;
+  if (isLoggedIn) {
+    const discount = Math.round(finalTotal * 0.1);
+    addonsHtml += `
+      <div class="order-line add-on">
+        <span class="label" style="color: var(--green);">&#9733; Member Discount (10%)</span>
+        <span class="value" style="color: var(--green);">-$${discount}</span>
+      </div>
+    `;
+    finalTotal -= discount;
+  }
+
   document.getElementById('summaryAddons').innerHTML = addonsHtml;
-  document.getElementById('summaryTotal').textContent = `$${baseTotal + addonsTotal}`;
+  document.getElementById('summaryTotal').textContent = `$${finalTotal}`;
 }
 
 // ============================================================
@@ -3014,7 +3531,10 @@ function handlePay() {
       const qty = isFlat ? 1 : guestCount;
       addonsTotal += price * qty;
     });
-    const total = baseTotal + addonsTotal;
+    let total = baseTotal + addonsTotal;
+    if (isLoggedIn) {
+      total -= Math.round(total * 0.1);
+    }
 
     // Populate confirmation overlay
     document.getElementById('confNumber').textContent = confNum;
@@ -3059,11 +3579,13 @@ function closeConfirmation() {
   }, 300);
 }
 
-// Escape key closes panel or confirmation
+// Escape key closes panel, confirmation, or login
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('confirmationOverlay').classList.contains('active')) {
       closeConfirmation();
+    } else if (document.getElementById('loginModal').classList.contains('active')) {
+      closeLogin();
     } else {
       closeBooking();
     }
