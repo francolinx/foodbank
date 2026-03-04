@@ -2379,6 +2379,7 @@ body {
   transition: all var(--transition-smooth);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .blog-card:hover {
@@ -2501,6 +2502,50 @@ body {
   font-size: 22px;
 }
 
+.blog-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2200;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+}
+
+.blog-modal-backdrop.active { opacity: 1; visibility: visible; }
+
+.blog-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  background: linear-gradient(165deg, rgba(22,22,22,0.98), rgba(12,12,12,0.98));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-elevated), var(--shadow-glow);
+  z-index: 2201;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-smooth);
+}
+
+.blog-modal.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+.blog-modal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 28px 30px 18px; border-bottom: 1px solid var(--border); }
+.blog-modal-header h3 { font-family: var(--font-display); font-size: clamp(24px, 2.8vw, 34px); line-height: 1.2; font-weight: 500; }
+.blog-modal-close { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; font-size: 20px; }
+.blog-modal-body { padding: 22px 30px 30px; }
+.blog-modal-body p { color: var(--text-secondary); margin-bottom: 16px; }
+.blog-modal-upsell { margin-top: 12px; }
+.rental-pricing-select { width: 100%; margin-top: 12px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 10px 12px; font-family: var(--font-body); }
+.rental-feature-list { list-style: none; margin-top: 14px; display: grid; gap: 8px; }
+.rental-feature-list li { color: var(--text-secondary); font-size: 13px; }
+.rental-disclaimer { margin-top: 16px; color: var(--text-muted); font-size: 12px; line-height: 1.5; }
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
@@ -2536,6 +2581,9 @@ body {
   .facility-block.reversed .facility-image { order: 0; }
   .facility-block.reversed .facility-text { order: 0; }
   .blog-grid { grid-template-columns: 1fr; }
+  .blog-modal { width: calc(100vw - 24px); max-height: calc(100vh - 24px); }
+  .blog-modal-header,
+  .blog-modal-body { padding-left: 20px; padding-right: 20px; }
 }
 </style>
 </head>
@@ -2635,6 +2683,7 @@ body {
         <button class="category-tab" data-category="corporate">Corporate</button>
         <button class="category-tab" data-category="university">University</button>
         <button class="category-tab" data-category="wellness">Wellness</button>
+        <button class="category-tab" data-category="facility">Facility &amp; Event Rentals</button>
       </div>
       <div class="view-toggle">
         <button class="view-btn active" data-view="grid">
@@ -2848,8 +2897,7 @@ body {
     </div>
 
     <div class="blog-grid">
-      <!-- Blog Card 1: Diabetes -->
-      <div class="blog-card">
+      <div class="blog-card" data-blog-id="diabetes">
         <div class="blog-card-header">
           <div class="blog-card-tag blog-tag-diabetes">&#9432; Diabetes Management</div>
           <h3>The Blood Sugar Balancing Act: Flavorful Low-Glycemic Cooking</h3>
@@ -2858,12 +2906,10 @@ body {
           <p>Managing diabetes doesn't mean sacrificing flavor. Discover how swapping refined grains for complex mountain-grown legumes can stabilize glucose levels while elevating your weeknight dinners. Read the research and learn the techniques.</p>
         </div>
         <div class="blog-card-footer">
-          <a href="#classes" class="blog-cta-btn" onclick="scrollToClasses(event)">Register for the Low-Glycemic Cooking Class ($50)</a>
+          <a href="#" class="blog-cta-btn" onclick="event.preventDefault(); openBlogModal('diabetes');">Read Full Research Brief</a>
         </div>
       </div>
-
-      <!-- Blog Card 2: Heart Disease -->
-      <div class="blog-card">
+      <div class="blog-card" data-blog-id="heart">
         <div class="blog-card-header">
           <div class="blog-card-tag blog-tag-heart">&#9825; Heart Health</div>
           <h3>Heart-Healthy Mountain Harvest: Lowering Cholesterol with Local Greens</h3>
@@ -2872,12 +2918,10 @@ body {
           <p>Cardiovascular health starts on the cutting board. Learn how to extract maximum flavor without excess sodium, and explore the science behind heart-healthy fats and leafy greens to naturally manage cholesterol.</p>
         </div>
         <div class="blog-card-footer">
-          <a href="#classes" class="blog-cta-btn" onclick="scrollToClasses(event)">Register for the Heart Health Workshop ($75)</a>
+          <a href="#" class="blog-cta-btn" onclick="event.preventDefault(); openBlogModal('heart');">Read Full Research Brief</a>
         </div>
       </div>
-
-      <!-- Blog Card 3: Autoimmune & Inflammation -->
-      <div class="blog-card">
+      <div class="blog-card" data-blog-id="inflammation">
         <div class="blog-card-header">
           <div class="blog-card-tag blog-tag-inflammation">&#9752; Anti-Inflammatory</div>
           <h3>The Anti-Inflammatory Kitchen: Cooking to Cool the Fire</h3>
@@ -2886,12 +2930,49 @@ body {
           <p>Chronic inflammation is linked to numerous autoimmune conditions. We explore the latest research on antioxidant-rich spices, Omega-3s, and gut-healing broths to help you craft menus that heal from the inside out.</p>
         </div>
         <div class="blog-card-footer">
-          <a href="#classes" class="blog-cta-btn" onclick="scrollToClasses(event)">Register for the Anti-Inflammatory Masterclass ($75)</a>
+          <a href="#" class="blog-cta-btn" onclick="event.preventDefault(); openBlogModal('inflammation');">Read Full Research Brief</a>
+        </div>
+      </div>
+      <div class="blog-card" data-blog-id="gut-health">
+        <div class="blog-card-header">
+          <div class="blog-card-tag blog-tag-inflammation">&#129463; Gut Health</div>
+          <h3>Gut Health &amp; Fermentation: The Microbiome Menu</h3>
+        </div>
+        <div class="blog-card-body">
+          <p>The gut microbiome shapes digestion, immunity, and inflammation markers. Learn how fermented foods, prebiotic fibers, and smarter prep techniques can support gut diversity and metabolic resilience.</p>
+        </div>
+        <div class="blog-card-footer">
+          <a href="#" class="blog-cta-btn" onclick="event.preventDefault(); openBlogModal('gut-health');">Read Full Research Brief</a>
+        </div>
+      </div>
+      <div class="blog-card" data-blog-id="brain-food">
+        <div class="blog-card-header">
+          <div class="blog-card-tag blog-tag-heart">&#129504; Cognitive Wellness</div>
+          <h3>Brain Food: Cognitive Health and Antioxidant Cooking</h3>
+        </div>
+        <div class="blog-card-body">
+          <p>Cognitive nutrition is one of the fastest-growing fields in preventive wellness. Explore antioxidant-rich ingredients and cooking methods that help protect neural health while delivering exceptional flavor.</p>
+        </div>
+        <div class="blog-card-footer">
+          <a href="#" class="blog-cta-btn" onclick="event.preventDefault(); openBlogModal('brain-food');">Read Full Research Brief</a>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="blog-modal-backdrop" id="blogModalBackdrop"></div>
+<div class="blog-modal" id="blogModal" role="dialog" aria-modal="true" aria-labelledby="blogModalTitle">
+  <div class="blog-modal-header">
+    <div>
+      <div class="section-label" id="blogModalTag" style="margin-bottom: 10px;">Culinary Medicine</div>
+      <h3 id="blogModalTitle">Culinary Medicine Insight</h3>
+    </div>
+    <button class="blog-modal-close" id="blogModalClose" aria-label="Close blog modal">&times;</button>
+  </div>
+  <div class="blog-modal-body" id="blogModalBody"></div>
+</div>
+
 
 <!-- ============================================================
      FOOTER
@@ -3433,7 +3514,7 @@ const classes = [
     desc: "Full weekend kitchen takeover for Georgia Tech's culinary society. Hands-on instruction, team challenges, and a closing dinner.",
     category: "university",
     categoryLabel: "University",
-    date: "Sat\u2013Sun, Mar 28\u201329",
+    date: "Sat–Sun, Mar 28–29",
     time: "9:00 AM",
     duration: "2 days",
     price: 750,
@@ -3445,6 +3526,68 @@ const classes = [
     spots: 1,
     scarcity: "hot",
     calendarDays: [28, 29]
+  },
+  {
+    id: 13,
+    title: "Commercial Kitchen Rental",
+    desc: "For CPG, prep, and photoshoots with full use of our premium commercial kitchen.",
+    category: "facility",
+    categoryLabel: "Facility Rental",
+    date: "Flexible Scheduling",
+    time: "Select duration",
+    duration: "Half Day or Full Day",
+    price: 400,
+    priceLabel: "starting at",
+    image: "FBNEGA-Teaching-Kitchen-1.webp",
+    chef: chefProfiles.jamal,
+    rating: 4.98,
+    reviews: 21,
+    spots: 6,
+    scarcity: null,
+    rentalOptions: ["Half Day ($400)", "Full Day ($700)"],
+    rentalFeatures: ["Full use of Kitchen Area", "Fridge", "Freezer", "Professional Appliances"],
+    rentalDisclaimer: "Note: $50 Key Deposit and $250 Cleaning Deposit required (not included in pricing)."
+  },
+  {
+    id: 14,
+    title: "Event Space Rental",
+    desc: "For team building and celebrations in our curated mountain event environment.",
+    category: "facility",
+    categoryLabel: "Event Rental",
+    date: "Flexible Scheduling",
+    time: "Select duration",
+    duration: "2 Hours to Full Day",
+    price: 150,
+    priceLabel: "starting at",
+    image: "FBNEGA-Teaching-Kitchen-2.webp",
+    chef: chefProfiles.marcus,
+    rating: 4.96,
+    reviews: 17,
+    spots: 8,
+    scarcity: null,
+    rentalOptions: ["2 Hours ($150)", "Half Day ($300)", "Full Day ($500)"],
+    rentalFeatures: ["Seating for up to 55", "A/V equipment", "Ice Machine"],
+    rentalDisclaimer: "Note: $50 Key Deposit and $250 Cleaning Deposit required (not included in pricing)."
+  },
+  {
+    id: 15,
+    title: "Private Chef-Taught Demos",
+    desc: "Chef-led private demos for premium experiences and branded culinary activations.",
+    category: "facility",
+    categoryLabel: "Private Demo",
+    date: "Custom Quote",
+    time: "By appointment",
+    duration: "Customized",
+    price: 900,
+    priceLabel: "package estimate",
+    image: "FBNEGA-Teaching-Kitchen-1.webp",
+    chef: chefProfiles.ava,
+    rating: 4.99,
+    reviews: 12,
+    spots: 3,
+    scarcity: null,
+    rentalPricingDetails: ["Space ($400/half day)", "Chef ($200/hr)", "Food ($300)"],
+    rentalDisclaimer: "Note: $50 Key Deposit and $250 Cleaning Deposit required (not included in pricing)."
   }
 ];
 
@@ -3573,9 +3716,19 @@ function renderClasses(category = 'all') {
       scarcityBadge = `<div class="badge-scarcity badge-sold-out">Sold Out</div>`;
     }
 
+    const isFacilityRental = cls.category === 'facility';
     const bookBtnClass = cls.scarcity === 'sold-out' ? 'card-book-btn sold-out' : 'card-book-btn';
-    const bookBtnText = cls.scarcity === 'sold-out' ? 'Sold Out' : 'Book Now';
+    const bookBtnText = isFacilityRental ? 'Request Booking' : (cls.scarcity === 'sold-out' ? 'Sold Out' : 'Book Now');
     const bookAction = cls.scarcity === 'sold-out' ? '' : `onclick="openBooking(${cls.id}); event.stopPropagation();"`;
+
+    const rentalPricingBlock = cls.rentalOptions
+      ? `<label style="display:block; font-size:12px; color: var(--text-muted); margin-top: 10px;">Pricing Options</label><select class="rental-pricing-select" onclick="event.stopPropagation();" aria-label="${cls.title} pricing options">${cls.rentalOptions.map(option => `<option>${option}</option>`).join('')}</select>`
+      : cls.rentalPricingDetails
+        ? `<label style="display:block; font-size:12px; color: var(--text-muted); margin-top: 10px;">Pricing Structure</label><ul class="rental-feature-list">${cls.rentalPricingDetails.map(item => `<li>&#8226; ${item}</li>`).join('')}</ul>`
+        : '';
+
+    const rentalFeaturesBlock = cls.rentalFeatures ? `<ul class="rental-feature-list">${cls.rentalFeatures.map(feature => `<li>&#10003; ${feature}</li>`).join('')}</ul>` : '';
+    const rentalDisclaimerBlock = cls.rentalDisclaimer ? `<p class="rental-disclaimer">${cls.rentalDisclaimer}</p>` : '';
 
     return `
       <div class="class-card" style="animation: fadeUp 0.6s ease-out ${i * 0.08}s both;" onclick="if(${cls.scarcity !== 'sold-out'}) openBooking(${cls.id})">
@@ -3594,6 +3747,7 @@ function renderClasses(category = 'all') {
           </div>
           <h3>${cls.title}</h3>
           <p class="card-desc">${cls.desc}</p>
+          ${isFacilityRental ? `${rentalPricingBlock}${rentalFeaturesBlock}${rentalDisclaimerBlock}` : ''}
           <div class="card-chef">
             <img class="card-chef-avatar" src="${cls.chef.avatar}" alt="${cls.chef.name}">
             <div class="card-chef-info">
@@ -3626,7 +3780,8 @@ const categoryColors = {
   'date-night': '#e85d4a',
   'corporate': '#4ea3e0',
   'university': '#9b59b6',
-  'wellness': '#4ecb71'
+  'wellness': '#4ecb71',
+  'facility': '#c8a96e'
 };
 
 function renderCalendar() {
@@ -3754,6 +3909,64 @@ function scrollToClasses(e) {
   e.preventDefault();
   document.getElementById('classes').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// ============================================================
+// BLOG MODAL CONTENT HUB
+// ============================================================
+const blogModalContent = {
+  'diabetes': { tag: 'ⓘ Diabetes Management', title: 'The Blood Sugar Balancing Act: Flavorful Low-Glycemic Cooking', paragraphs: [
+    'Low-glycemic cooking is a cornerstone strategy in culinary medicine for type 2 diabetes and prediabetes management. Peer-reviewed studies consistently show that meals centered on high-fiber legumes, intact whole grains, and non-starchy vegetables can reduce postprandial glucose spikes and improve insulin sensitivity.',
+    'Technique matters as much as ingredients. Pairing carbohydrates with healthy fats and lean protein slows gastric emptying and supports steadier blood sugar control while increasing menu adherence.',
+    'Our culinary medicine team translates evidence into recipes designed for flavor, accessibility, and measurable glucose stability.'
+  ], ctaLabel: 'Book the Low-Glycemic Cooking Masterclass - $75', ctaHref: '#classes' },
+  'heart': { tag: '♡ Heart Health', title: 'Heart-Healthy Mountain Harvest: Lowering Cholesterol with Local Greens', paragraphs: [
+    'Cardiovascular nutrition research supports dietary patterns rich in soluble fiber, omega-3 fatty acids, and polyphenol-dense produce. Regular intake of greens, nuts, and legumes is associated with improved LDL profiles.',
+    'Preparation strategy directly impacts cardiometabolic health. Swapping deep frying for high-heat roasting and using olive-oil-forward dressings can support blood pressure and endothelial function.',
+    'Our heart-health approach blends mountain-seasonal produce with preventive cardiology principles for delicious long-term adherence.'
+  ], ctaLabel: 'Reserve the Heart Health Culinary Workshop - $75', ctaHref: '#classes' },
+  'inflammation': { tag: '☯ Anti-Inflammatory', title: 'The Anti-Inflammatory Kitchen: Cooking to Cool the Fire', paragraphs: [
+    'Chronic low-grade inflammation is associated with autoimmune burden and metabolic stress. Evidence favors patterns rich in omega-3 fats, phytonutrients, and minimally processed foods.',
+    'Method matters: gentle braising, controlled roasting, and pressure-cooked legumes help preserve nutrient value while reducing ultra-processed dependency.',
+    'Guests learn adaptable meal templates that align with personal tolerance and clinical guidance while maintaining premium flavor.'
+  ], ctaLabel: 'Join the Anti-Inflammatory Masterclass - $75', ctaHref: '#classes' },
+  'gut-health': { tag: '🧫 Gut Health', title: 'Gut Health & Fermentation: The Microbiome Menu', paragraphs: [
+    'Microbiome science highlights the role of fermented foods and prebiotic fibers in gut ecosystem resilience and inflammation balance.',
+    'Fermentation best practices like salinity ratios and temperature control help deliver consistent probiotic culinary outcomes.',
+    'We teach practical gut-friendly systems designed for digestion, immune support, and real-world repeatability.'
+  ], ctaLabel: 'Book the Fermentation & Gut Health Lab - $85', ctaHref: '#classes' },
+  'brain-food': { tag: '🧠 Cognitive Wellness', title: 'Brain Food: Cognitive Health and Antioxidant Cooking', paragraphs: [
+    'Nutritional neuroscience links antioxidant-rich dietary patterns with improved memory outcomes and reduced cognitive decline risk.',
+    'Kitchen execution impacts antioxidant retention; quick sautéing, strategic steaming, and low-oxidation fats can preserve protective compounds.',
+    'Our framework helps guests build weekly brain-supportive menus without sacrificing luxury-level flavor.'
+  ], ctaLabel: 'Enroll in the Brain Food Performance Class - $90', ctaHref: '#classes' }
+};
+
+function openBlogModal(blogId) {
+  const content = blogModalContent[blogId];
+  if (!content) return;
+  document.getElementById('blogModalTag').textContent = content.tag;
+  document.getElementById('blogModalTitle').textContent = content.title;
+  document.getElementById('blogModalBody').innerHTML = `${content.paragraphs.map(paragraph => `<p>${paragraph}</p>`).join('')}<div class="blog-modal-upsell"><a href="${content.ctaHref}" class="blog-cta-btn" onclick="scrollToClasses(event); closeBlogModal();">${content.ctaLabel}</a></div>`;
+  document.getElementById('blogModalBackdrop').classList.add('active');
+  document.getElementById('blogModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBlogModal() {
+  document.getElementById('blogModalBackdrop').classList.remove('active');
+  document.getElementById('blogModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.blog-card').forEach(card => {
+  card.addEventListener('click', event => {
+    if (event.target.closest('.blog-cta-btn')) return;
+    openBlogModal(card.dataset.blogId);
+  });
+});
+
+document.getElementById('blogModalClose').addEventListener('click', closeBlogModal);
+document.getElementById('blogModalBackdrop').addEventListener('click', closeBlogModal);
 
 // ============================================================
 // BOOKING PANEL
@@ -3975,6 +4188,8 @@ document.addEventListener('keydown', (e) => {
       closeConfirmation();
     } else if (document.getElementById('loginModal').classList.contains('active')) {
       closeLogin();
+    } else if (document.getElementById('blogModal').classList.contains('active')) {
+      closeBlogModal();
     } else {
       closeBooking();
     }
