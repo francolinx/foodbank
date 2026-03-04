@@ -2230,6 +2230,278 @@ body {
 }
 
 /* ============================================================
+   FACILITY OVERVIEW
+   ============================================================ */
+.facility-section {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.facility-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-bottom: 64px;
+}
+
+.facility-block:last-child {
+  margin-bottom: 0;
+}
+
+.facility-block.reversed .facility-image {
+  order: 2;
+}
+
+.facility-block.reversed .facility-text {
+  order: 1;
+}
+
+.facility-image {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.facility-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.facility-image:hover img {
+  transform: scale(1.03);
+}
+
+.facility-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(200, 169, 110, 0.1);
+  pointer-events: none;
+}
+
+.facility-text h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.facility-text h3 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.facility-text p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.facility-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.facility-feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.facility-feature:hover {
+  border-color: rgba(200, 169, 110, 0.25);
+  color: var(--text-primary);
+}
+
+.facility-feature .feat-icon {
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.facility-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--gold-light);
+}
+
+.facility-location-icon {
+  width: 28px;
+  height: 28px;
+  background: rgba(200, 169, 110, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   BLOG / CULINARY MEDICINE HUB
+   ============================================================ */
+.blog-section {
+  background: var(--bg-primary);
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 48px;
+}
+
+.blog-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(200, 169, 110, 0.2);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+.blog-card-header {
+  padding: 28px 28px 0;
+  flex-shrink: 0;
+}
+
+.blog-card-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+.blog-tag-diabetes {
+  background: rgba(78, 161, 224, 0.12);
+  color: #4ea1e0;
+  border: 1px solid rgba(78, 161, 224, 0.2);
+}
+
+.blog-tag-heart {
+  background: rgba(232, 93, 74, 0.12);
+  color: var(--coral);
+  border: 1px solid rgba(232, 93, 74, 0.2);
+}
+
+.blog-tag-inflammation {
+  background: rgba(78, 203, 113, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(78, 203, 113, 0.2);
+}
+
+.blog-card h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.35;
+  margin-bottom: 14px;
+}
+
+.blog-card-body {
+  padding: 0 28px;
+  flex: 1;
+}
+
+.blog-card-body p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.blog-card-footer {
+  padding: 24px 28px 28px;
+  margin-top: auto;
+}
+
+.blog-cta-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--bg-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.blog-cta-btn:hover {
+  box-shadow: 0 6px 24px rgba(200, 169, 110, 0.35);
+  transform: translateY(-1px);
+}
+
+.blog-cta-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.6s ease;
+}
+
+.blog-cta-btn:hover::after {
+  left: 100%;
+}
+
+.blog-divider-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(200, 169, 110, 0.15), rgba(200, 169, 110, 0.05));
+  border: 1px solid rgba(200, 169, 110, 0.2);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 22px;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
@@ -2237,6 +2509,8 @@ body {
   .chef-grid { grid-template-columns: 1fr; }
   .chefs-showcase { grid-template-columns: repeat(2, 1fr); }
   .cal-day { min-height: 90px; }
+  .facility-block { gap: 36px; }
+  .blog-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -2258,6 +2532,10 @@ body {
   .filter-controls { align-items: stretch; }
   .confirmation-card { padding: 32px 24px; }
   .login-modal { padding: 28px 20px; }
+  .facility-block { grid-template-columns: 1fr; gap: 28px; }
+  .facility-block.reversed .facility-image { order: 0; }
+  .facility-block.reversed .facility-text { order: 0; }
+  .blog-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -2273,8 +2551,9 @@ body {
   </a>
   <ul class="nav-links">
     <li><a href="#classes">Classes</a></li>
+    <li><a href="#facility">Our Kitchen</a></li>
     <li><a href="#chef">Our Chefs</a></li>
-    <li><a href="#experience">The Experience</a></li>
+    <li><a href="#blog">Culinary Medicine</a></li>
     <li id="navSignIn"><a href="#" onclick="openLogin(event)">Sign In</a></li>
     <li id="navMember" style="display: none; position: relative;">
       <a href="#" class="nav-member" onclick="toggleMemberMenu(event)">
@@ -2492,6 +2771,58 @@ body {
 </section>
 
 <!-- ============================================================
+     FACILITY OVERVIEW
+     ============================================================ -->
+<section class="facility-section" id="facility">
+  <div class="section" style="padding-top: 80px; padding-bottom: 80px;">
+    <div style="text-align: center; margin-bottom: 56px;">
+      <div class="section-label" style="justify-content: center;">Our Space</div>
+      <h2 class="section-title">A Kitchen Built for <em>Inspiration</em></h2>
+      <p class="section-desc" style="margin: 0 auto;">Nestled in the heart of Clayton, GA, our state-of-the-art facility blends professional-grade equipment with the warmth of the North Georgia Mountains.</p>
+    </div>
+
+    <!-- Block 1: Image Left, Text Right -->
+    <div class="facility-block">
+      <div class="facility-image">
+        <img src="FBNEGA-Teaching-Kitchen-1.webp" alt="The Teaching Kitchen facility at Food Bank of Northeast Georgia" loading="lazy">
+      </div>
+      <div class="facility-text">
+        <h3>Professional-Grade, <em>Community-Driven</em></h3>
+        <p>Our 2,400 sq. ft. teaching kitchen features professional Wolf ranges, commercial prep stations, and full AV equipment for demonstrations, live-streaming, and corporate presentations. With seating for up to 55 guests, the space transforms from an intimate cooking class to a full-scale corporate retreat with ease.</p>
+        <div class="facility-features">
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> Professional Wolf Ranges</div>
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> AV & Presentation Equipment</div>
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> Seating for 55 Guests</div>
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> Commercial Prep Stations</div>
+        </div>
+        <div class="facility-location">
+          <div class="facility-location-icon">&#128205;</div>
+          <span>46 Plaza Way, Clayton, GA 30525</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 2: Text Left, Image Right -->
+    <div class="facility-block reversed">
+      <div class="facility-image">
+        <img src="Foodbank6-1024x446.jpg" alt="Food Bank of Northeast Georgia community kitchen and event space" loading="lazy">
+      </div>
+      <div class="facility-text">
+        <h3>Beyond the Classroom: <em>Private Events & Production</em></h3>
+        <p>The Teaching Kitchen isn't just for cooking classes. Our versatile facility is the perfect venue for farm-to-table dinners, product demonstrations, CPG manufacturing runs, and corporate team-building retreats. Every booking supports the Food Bank of Northeast Georgia's mission to fight hunger in our community.</p>
+        <div class="facility-features">
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> Farm-to-Table Dinners</div>
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> Product Demos</div>
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> CPG Manufacturing</div>
+          <div class="facility-feature"><span class="feat-icon">&#9733;</span> Corporate Retreats</div>
+        </div>
+        <a href="#classes" class="btn btn-primary" style="margin-top: 24px;" onclick="scrollToClasses(event)">Inquire About Private Bookings</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
      CTA BANNER
      ============================================================ -->
 <div class="cta-banner">
@@ -2503,6 +2834,64 @@ body {
     <a href="#classes" class="btn btn-primary" onclick="scrollToClasses(event)">Browse Upcoming Classes</a>
   </div>
 </div>
+
+<!-- ============================================================
+     CULINARY MEDICINE BLOG HUB
+     ============================================================ -->
+<section class="blog-section" id="blog">
+  <div class="section">
+    <div style="text-align: center; margin-bottom: 8px;">
+      <div class="blog-divider-icon">&#128218;</div>
+      <div class="section-label" style="justify-content: center;">Evidence-Based Cooking</div>
+      <h2 class="section-title">Culinary Medicine Insights</h2>
+      <p class="section-desc" style="margin: 0 auto;">Where peer-reviewed nutrition science meets hands-on mountain cooking. Explore how the right ingredients and techniques can help manage chronic conditions.</p>
+    </div>
+
+    <div class="blog-grid">
+      <!-- Blog Card 1: Diabetes -->
+      <div class="blog-card">
+        <div class="blog-card-header">
+          <div class="blog-card-tag blog-tag-diabetes">&#9432; Diabetes Management</div>
+          <h3>The Blood Sugar Balancing Act: Flavorful Low-Glycemic Cooking</h3>
+        </div>
+        <div class="blog-card-body">
+          <p>Managing diabetes doesn't mean sacrificing flavor. Discover how swapping refined grains for complex mountain-grown legumes can stabilize glucose levels while elevating your weeknight dinners. Read the research and learn the techniques.</p>
+        </div>
+        <div class="blog-card-footer">
+          <a href="#classes" class="blog-cta-btn" onclick="scrollToClasses(event)">Register for the Low-Glycemic Cooking Class ($50)</a>
+        </div>
+      </div>
+
+      <!-- Blog Card 2: Heart Disease -->
+      <div class="blog-card">
+        <div class="blog-card-header">
+          <div class="blog-card-tag blog-tag-heart">&#9825; Heart Health</div>
+          <h3>Heart-Healthy Mountain Harvest: Lowering Cholesterol with Local Greens</h3>
+        </div>
+        <div class="blog-card-body">
+          <p>Cardiovascular health starts on the cutting board. Learn how to extract maximum flavor without excess sodium, and explore the science behind heart-healthy fats and leafy greens to naturally manage cholesterol.</p>
+        </div>
+        <div class="blog-card-footer">
+          <a href="#classes" class="blog-cta-btn" onclick="scrollToClasses(event)">Register for the Heart Health Workshop ($75)</a>
+        </div>
+      </div>
+
+      <!-- Blog Card 3: Autoimmune & Inflammation -->
+      <div class="blog-card">
+        <div class="blog-card-header">
+          <div class="blog-card-tag blog-tag-inflammation">&#9752; Anti-Inflammatory</div>
+          <h3>The Anti-Inflammatory Kitchen: Cooking to Cool the Fire</h3>
+        </div>
+        <div class="blog-card-body">
+          <p>Chronic inflammation is linked to numerous autoimmune conditions. We explore the latest research on antioxidant-rich spices, Omega-3s, and gut-healing broths to help you craft menus that heal from the inside out.</p>
+        </div>
+        <div class="blog-card-footer">
+          <a href="#classes" class="blog-cta-btn" onclick="scrollToClasses(event)">Register for the Anti-Inflammatory Masterclass ($75)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============================================================
      FOOTER
