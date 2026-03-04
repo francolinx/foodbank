@@ -1462,11 +1462,482 @@ body {
 }
 
 /* ============================================================
+   VIEW TOGGLE
+   ============================================================ */
+.filter-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-secondary);
+  border-radius: 100px;
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+
+.view-btn {
+  padding: 7px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-btn:hover { color: var(--text-primary); }
+
+.view-btn.active {
+  background: var(--gold);
+  color: var(--bg-primary);
+  font-weight: 600;
+}
+
+/* ============================================================
+   CALENDAR VIEW
+   ============================================================ */
+.calendar-container {
+  display: none;
+}
+
+.calendar-container.active {
+  display: block;
+  animation: fadeUp 0.4s ease-out both;
+}
+
+.classes-grid.hidden {
+  display: none;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.cal-nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+}
+
+.cal-nav-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.cal-month-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  min-width: 200px;
+  text-align: center;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day {
+  min-height: 110px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.cal-day.empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.cal-day.has-class {
+  cursor: pointer;
+  border-color: rgba(200, 169, 110, 0.15);
+}
+
+.cal-day.has-class:hover {
+  border-color: var(--gold);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.cal-day.today .cal-day-number {
+  background: var(--gold);
+  color: var(--bg-primary);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-day-number {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: inline-flex;
+}
+
+.cal-day.has-class .cal-day-number {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.cal-events {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cal-event-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--gold-light);
+  font-weight: 500;
+  line-height: 1.3;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background var(--transition-fast);
+}
+
+.cal-event-item:hover {
+  background: rgba(200, 169, 110, 0.1);
+}
+
+.cal-event-bar {
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   CONFIRMATION OVERLAY
+   ============================================================ */
+.confirmation-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 11, 11, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+}
+
+.confirmation-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.confirmation-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 48px;
+  max-width: 520px;
+  width: 90%;
+  text-align: center;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.confirmation-overlay.active .confirmation-card {
+  transform: scale(1) translateY(0);
+}
+
+.conf-checkmark {
+  width: 72px;
+  height: 72px;
+  background: var(--green-soft);
+  border: 2px solid var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 32px;
+  color: var(--green);
+  animation: checkPop 0.5s ease 0.3s both;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.conf-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.conf-subtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+.conf-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(200, 169, 110, 0.1);
+  border: 1px solid rgba(200, 169, 110, 0.25);
+  border-radius: 100px;
+  padding: 8px 20px;
+  margin-bottom: 32px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+}
+
+.conf-details {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.conf-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.conf-detail-row:last-child {
+  border-bottom: none;
+}
+
+.conf-detail-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.conf-detail-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.conf-detail-row.total {
+  border-top: 1px solid var(--border-light);
+  border-bottom: none;
+  margin-top: 4px;
+  padding-top: 14px;
+}
+
+.conf-detail-row.total .conf-detail-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.conf-email-notice {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.conf-email-notice strong {
+  color: var(--text-secondary);
+}
+
+.conf-return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: var(--bg-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.conf-return-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(200, 169, 110, 0.4);
+}
+
+/* ============================================================
+   CHEFS SHOWCASE (Multi-Chef Grid)
+   ============================================================ */
+.chefs-showcase {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.chef-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+  text-align: center;
+}
+
+.chef-card:hover {
+  border-color: rgba(200, 169, 110, 0.25);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-glow);
+}
+
+.chef-card-image {
+  height: 240px;
+  overflow: hidden;
+  position: relative;
+}
+
+.chef-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.chef-card:hover .chef-card-image img {
+  transform: scale(1.05);
+}
+
+.chef-card-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, var(--bg-card), transparent);
+}
+
+.chef-card-body {
+  padding: 20px;
+}
+
+.chef-card-body h4 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.chef-card-role {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.chef-card-specialty {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.chef-card-creds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.chef-card-cred {
+  font-size: 10px;
+  padding: 4px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
   .experience-cards { grid-template-columns: repeat(2, 1fr); }
   .chef-grid { grid-template-columns: 1fr; }
+  .chefs-showcase { grid-template-columns: repeat(2, 1fr); }
+  .cal-day { min-height: 90px; }
 }
 
 @media (max-width: 768px) {
@@ -1480,6 +1951,13 @@ body {
   .footer { padding: 40px 20px 24px; }
   .booking-panel { width: 100%; }
   .category-tabs { overflow-x: auto; }
+  .chefs-showcase { grid-template-columns: 1fr; }
+  .cal-day { min-height: 60px; }
+  .cal-event-item span { display: none; }
+  .cal-event-bar { height: 6px; width: 6px; border-radius: 50%; }
+  .cal-events { flex-direction: row; gap: 4px; }
+  .filter-controls { align-items: stretch; }
+  .confirmation-card { padding: 32px 24px; }
 }
 </style>
 </head>
@@ -1557,17 +2035,41 @@ body {
       <h2 class="section-title">Find Your Perfect Class</h2>
       <p class="section-desc">From intimate date nights to full-scale university takeovers, there's a seat at our table for every occasion.</p>
     </div>
-    <div class="category-tabs">
-      <button class="category-tab active" data-category="all">All Classes</button>
-      <button class="category-tab" data-category="date-night">Date Night</button>
-      <button class="category-tab" data-category="corporate">Corporate</button>
-      <button class="category-tab" data-category="university">University</button>
-      <button class="category-tab" data-category="wellness">Wellness</button>
+    <div class="filter-controls">
+      <div class="category-tabs">
+        <button class="category-tab active" data-category="all">All Classes</button>
+        <button class="category-tab" data-category="date-night">Date Night</button>
+        <button class="category-tab" data-category="corporate">Corporate</button>
+        <button class="category-tab" data-category="university">University</button>
+        <button class="category-tab" data-category="wellness">Wellness</button>
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="grid">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1"/><rect x="8" y="0" width="6" height="6" rx="1"/><rect x="0" y="8" width="6" height="6" rx="1"/><rect x="8" y="8" width="6" height="6" rx="1"/></svg>
+          Grid
+        </button>
+        <button class="view-btn" data-view="calendar">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="0.5" y="2" width="13" height="11" rx="1.5"/><line x1="0.5" y1="5.5" x2="13.5" y2="5.5"/><line x1="4" y1="0.5" x2="4" y2="3.5" stroke-linecap="round"/><line x1="10" y1="0.5" x2="10" y2="3.5" stroke-linecap="round"/></svg>
+          Calendar
+        </button>
+      </div>
     </div>
   </div>
 
   <div class="classes-grid" id="classesGrid">
     <!-- Cards injected by JS -->
+  </div>
+
+  <div class="calendar-container" id="calendarContainer">
+    <div class="calendar-nav">
+      <button class="cal-nav-btn" id="calPrev">&#8249;</button>
+      <h3 class="cal-month-title" id="calMonthTitle">March 2026</h3>
+      <button class="cal-nav-btn" id="calNext">&#8250;</button>
+    </div>
+    <div class="calendar-weekdays">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="calendar-days" id="calendarDays"></div>
   </div>
 </section>
 
@@ -1576,22 +2078,66 @@ body {
      ============================================================ -->
 <section class="chef-section" id="chef">
   <div class="section" style="padding-top: 80px; padding-bottom: 80px;">
-    <div class="section-label">Meet Your Instructor</div>
-    <h2 class="section-title">Led by Chef Marcus Trevino</h2>
-    <div class="chef-grid">
-      <div class="chef-image-wrapper">
-        <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80" alt="Chef Marcus Trevino">
-        <div class="chef-image-accent"></div>
+    <div style="text-align: center; margin-bottom: 16px;">
+      <div class="section-label" style="justify-content: center;">Meet Your Instructors</div>
+      <h2 class="section-title">World-Class Chefs, Mountain Soul</h2>
+      <p class="section-desc" style="margin: 0 auto;">Our diverse team of culinary experts brings decades of combined experience from Michelin-starred kitchens, renowned patisseries, and innovative wellness programs.</p>
+    </div>
+    <div class="chefs-showcase">
+      <div class="chef-card">
+        <div class="chef-card-image">
+          <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80" alt="Chef Marcus Trevino" loading="lazy">
+        </div>
+        <div class="chef-card-body">
+          <h4>Chef Marcus Trevino</h4>
+          <div class="chef-card-role">Executive Chef & Culinary Director</div>
+          <p class="chef-card-specialty">Fine Dining, Open Flame & Farm-to-Table</p>
+          <div class="chef-card-creds">
+            <span class="chef-card-cred">Michelin-Trained</span>
+            <span class="chef-card-cred">James Beard Semifinalist</span>
+          </div>
+        </div>
       </div>
-      <div class="chef-details">
-        <h3>Chef Marcus Trevino</h3>
-        <div class="chef-role">Executive Chef & Culinary Director</div>
-        <p>With 18 years of experience spanning Michelin-starred kitchens in New York, San Francisco, and Lyon, Chef Marcus brings a rare combination of technical mastery and warm, approachable instruction to every class.</p>
-        <p>His philosophy is simple: great food starts with great ingredients, honest technique, and genuine connection around the table.</p>
-        <div class="chef-credentials">
-          <div class="chef-credential"><span class="cred-icon">&#9733;</span> Michelin-Trained</div>
-          <div class="chef-credential"><span class="cred-icon">&#9733;</span> James Beard Semifinalist</div>
-          <div class="chef-credential"><span class="cred-icon">&#9733;</span> Farm-to-Table Advocate</div>
+      <div class="chef-card">
+        <div class="chef-card-image">
+          <img src="https://images.unsplash.com/photo-1595257841889-eca2678454e2?w=600&q=80" alt="Chef Elena Vasquez" loading="lazy">
+        </div>
+        <div class="chef-card-body">
+          <h4>Chef Elena Vasquez</h4>
+          <div class="chef-card-role">Pastry Chef & Baking Instructor</div>
+          <p class="chef-card-specialty">Artisan Pastry, Chocolate & Bread</p>
+          <div class="chef-card-creds">
+            <span class="chef-card-cred">Le Cordon Bleu Alumni</span>
+            <span class="chef-card-cred">Pastry Gold Medal</span>
+          </div>
+        </div>
+      </div>
+      <div class="chef-card">
+        <div class="chef-card-image">
+          <img src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?w=600&q=80" alt="Chef Jamal Williams" loading="lazy">
+        </div>
+        <div class="chef-card-body">
+          <h4>Chef Jamal Williams</h4>
+          <div class="chef-card-role">Culinary Educator & Fundamentals Lead</div>
+          <p class="chef-card-specialty">Knife Skills, Sauces & Technique</p>
+          <div class="chef-card-creds">
+            <span class="chef-card-cred">CIA Graduate</span>
+            <span class="chef-card-cred">ACF Certified Educator</span>
+          </div>
+        </div>
+      </div>
+      <div class="chef-card">
+        <div class="chef-card-image">
+          <img src="https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=600&q=80" alt="Chef Ava Chen" loading="lazy">
+        </div>
+        <div class="chef-card-body">
+          <h4>Chef Ava Chen</h4>
+          <div class="chef-card-role">Wellness Chef & Nutritionist</div>
+          <p class="chef-card-specialty">Health-Focused & Plant-Forward Cuisine</p>
+          <div class="chef-card-creds">
+            <span class="chef-card-cred">Certified Nutritionist</span>
+            <span class="chef-card-cred">Plant-Forward Specialist</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1707,16 +2253,16 @@ body {
       <div class="form-row">
         <div class="form-group">
           <label>First Name</label>
-          <input type="text" class="form-input" placeholder="Jane">
+          <input type="text" class="form-input" id="firstNameInput" placeholder="Jane">
         </div>
         <div class="form-group">
           <label>Last Name</label>
-          <input type="text" class="form-input" placeholder="Doe">
+          <input type="text" class="form-input" id="lastNameInput" placeholder="Doe">
         </div>
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" class="form-input" placeholder="jane@example.com">
+        <input type="email" class="form-input" id="emailInput" placeholder="jane@example.com">
       </div>
     </div>
 
@@ -1818,181 +2364,318 @@ body {
 </div>
 
 <!-- ============================================================
+     CONFIRMATION OVERLAY
+     ============================================================ -->
+<div class="confirmation-overlay" id="confirmationOverlay">
+  <div class="confirmation-card">
+    <div class="conf-checkmark">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h2 class="conf-title">Reservation Confirmed</h2>
+    <p class="conf-subtitle">Your culinary experience awaits in the mountains.</p>
+    <div class="conf-number" id="confNumber">#TK-84920</div>
+    <div class="conf-details">
+      <div class="conf-detail-row">
+        <span class="conf-detail-label">Class</span>
+        <span class="conf-detail-value" id="confClassName">—</span>
+      </div>
+      <div class="conf-detail-row">
+        <span class="conf-detail-label">Date</span>
+        <span class="conf-detail-value" id="confDate">—</span>
+      </div>
+      <div class="conf-detail-row">
+        <span class="conf-detail-label">Time</span>
+        <span class="conf-detail-value" id="confTime">—</span>
+      </div>
+      <div class="conf-detail-row">
+        <span class="conf-detail-label">Guests</span>
+        <span class="conf-detail-value" id="confGuests">—</span>
+      </div>
+      <div class="conf-detail-row">
+        <span class="conf-detail-label">Guest Name</span>
+        <span class="conf-detail-value" id="confGuestName">—</span>
+      </div>
+      <div class="conf-detail-row total">
+        <span class="conf-detail-label">Total</span>
+        <span class="conf-detail-value" id="confTotal">—</span>
+      </div>
+    </div>
+    <p class="conf-email-notice">A confirmation has been sent to <strong id="confEmail">guest@example.com</strong></p>
+    <button class="conf-return-btn" onclick="closeConfirmation()">Return to Classes</button>
+  </div>
+</div>
+
+<!-- ============================================================
      JAVASCRIPT
      ============================================================ -->
 <script>
 // ============================================================
-// CLASS DATA
+// CHEF PROFILES
+// ============================================================
+const chefProfiles = {
+  marcus: {
+    name: "Chef Marcus",
+    title: "Executive Chef",
+    avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80"
+  },
+  elena: {
+    name: "Chef Elena",
+    title: "Pastry Chef",
+    avatar: "https://images.unsplash.com/photo-1595257841889-eca2678454e2?w=100&q=80"
+  },
+  jamal: {
+    name: "Chef Jamal",
+    title: "Culinary Educator",
+    avatar: "https://images.unsplash.com/photo-1583394293214-28ded15ee548?w=100&q=80"
+  },
+  ava: {
+    name: "Chef Ava",
+    title: "Wellness Chef",
+    avatar: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=100&q=80"
+  }
+};
+
+// ============================================================
+// CLASS DATA — 12 classes, 4 chefs, spread across March 2026
 // ============================================================
 const classes = [
   {
     id: 1,
+    title: "Knife Skills 101",
+    desc: "Master the essential cuts every home cook needs. Learn proper grip, rocking technique, and knife safety with hands-on practice using fresh produce.",
+    category: "wellness",
+    categoryLabel: "Community",
+    date: "Thu, Mar 5",
+    time: "10:00 AM",
+    duration: "2 hours",
+    price: 45,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1566454419290-57a64afe21ab?w=600&q=80",
+    chef: chefProfiles.jamal,
+    rating: 4.96,
+    reviews: 64,
+    spots: 8,
+    scarcity: null,
+    calendarDays: [5]
+  },
+  {
+    id: 2,
     title: "Candlelit Pasta Workshop",
     desc: "Hand-rolled pasta, seasonal sauces, and a three-course dinner by candlelight. Perfect for couples.",
     category: "date-night",
     categoryLabel: "Date Night",
-    date: "Sat, Mar 14",
+    date: "Sat, Mar 7",
     time: "6:30 PM",
     duration: "3 hours",
     price: 125,
     priceLabel: "per person",
     image: "https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
+    chef: chefProfiles.marcus,
     rating: 4.98,
     reviews: 47,
     spots: 2,
-    scarcity: "hot"
-  },
-  {
-    id: 2,
-    title: "Farm-to-Table: Spring Harvest",
-    desc: "Start at the farm, pick your ingredients, then cook a 4-course seasonal menu with wine pairings.",
-    category: "date-night",
-    categoryLabel: "Date Night",
-    date: "Fri, Mar 20",
-    time: "5:00 PM",
-    duration: "4 hours",
-    price: 150,
-    priceLabel: "per person",
-    image: "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
-    rating: 5.0,
-    reviews: 32,
-    spots: 4,
-    scarcity: "low"
+    scarcity: "hot",
+    calendarDays: [7]
   },
   {
     id: 3,
-    title: "Executive Team: Fire & Smoke",
-    desc: "A competitive team-building experience with open-flame cooking, butchery demos, and plated presentations judged by Chef Marcus.",
-    category: "corporate",
-    categoryLabel: "Corporate",
-    date: "Wed, Mar 25",
-    time: "11:00 AM",
-    duration: "5 hours",
-    price: 195,
-    priceLabel: "per person",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
-    rating: 4.95,
-    reviews: 18,
-    spots: 8,
-    scarcity: null
-  },
-  {
-    id: 4,
-    title: "Leadership Kitchen: The Omakase Challenge",
-    desc: "Your executive team collaborates to create a multi-course omakase menu. Communication, delegation, and creativity under pressure.",
-    category: "corporate",
-    categoryLabel: "Corporate",
-    date: "Thu, Apr 3",
-    time: "10:00 AM",
-    duration: "6 hours",
-    price: 250,
-    priceLabel: "per person",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
-    rating: 4.92,
-    reviews: 11,
-    spots: 12,
-    scarcity: null
-  },
-  {
-    id: 5,
-    title: "UGA Baking Club: Weekend Takeover",
-    desc: "Exclusive 2-day baking intensive for UGA's A Pinch & a Dash. 550+ members, flat-fee group pricing, full kitchen access.",
-    category: "university",
-    categoryLabel: "University",
-    date: "Sat-Sun, Apr 12-13",
-    time: "9:00 AM",
-    duration: "2 days",
-    price: 650,
-    priceLabel: "flat fee",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
-    rating: 5.0,
-    reviews: 8,
-    spots: 0,
-    scarcity: "sold-out"
-  },
-  {
-    id: 6,
-    title: "Georgia Tech Culinary Club: Weekend Takeover",
-    desc: "Full weekend kitchen takeover for Georgia Tech's culinary society. Hands-on instruction, team challenges, and a closing dinner.",
-    category: "university",
-    categoryLabel: "University",
-    date: "Sat-Sun, Apr 26-27",
-    time: "9:00 AM",
-    duration: "2 days",
-    price: 750,
-    priceLabel: "flat fee",
-    image: "https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
-    rating: 4.96,
-    reviews: 5,
-    spots: 1,
-    scarcity: "hot"
-  },
-  {
-    id: 7,
-    title: "UNG Bakers: Mountain Bake Weekend",
-    desc: "University of North Georgia baking club exclusive. Artisan breads, mountain-inspired pastries, and sourdough workshops.",
-    category: "university",
-    categoryLabel: "University",
-    date: "Sat-Sun, May 10-11",
-    time: "10:00 AM",
-    duration: "2 days",
-    price: 500,
-    priceLabel: "flat fee",
-    image: "https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
-    rating: 4.90,
-    reviews: 3,
-    spots: 3,
-    scarcity: "low"
-  },
-  {
-    id: 8,
     title: "Nourish & Restore: Anti-Inflammatory Kitchen",
     desc: "Learn to cook vibrant, nutrient-dense meals designed to reduce inflammation and boost energy. Includes a take-home wellness guide.",
     category: "wellness",
     categoryLabel: "Wellness",
-    date: "Sun, Mar 16",
+    date: "Sun, Mar 8",
     time: "11:00 AM",
     duration: "2.5 hours",
     price: 65,
     priceLabel: "per person",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
+    chef: chefProfiles.ava,
     rating: 4.94,
     reviews: 29,
     spots: 5,
-    scarcity: null
+    scarcity: null,
+    calendarDays: [8]
+  },
+  {
+    id: 4,
+    title: "Executive Team: Fire & Smoke",
+    desc: "A competitive team-building experience with open-flame cooking, butchery demos, and plated presentations judged by Chef Marcus.",
+    category: "corporate",
+    categoryLabel: "Corporate",
+    date: "Thu, Mar 12",
+    time: "11:00 AM",
+    duration: "5 hours",
+    price: 195,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+    chef: chefProfiles.marcus,
+    rating: 4.95,
+    reviews: 18,
+    spots: 8,
+    scarcity: null,
+    calendarDays: [12]
+  },
+  {
+    id: 5,
+    title: "Artisan Bread & Pastry Workshop",
+    desc: "From rustic sourdough to delicate croissants, learn the art of lamination, fermentation, and baking with European flair.",
+    category: "date-night",
+    categoryLabel: "Date Night",
+    date: "Sat, Mar 14",
+    time: "2:00 PM",
+    duration: "3.5 hours",
+    price: 110,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
+    chef: chefProfiles.elena,
+    rating: 4.97,
+    reviews: 38,
+    spots: 4,
+    scarcity: "low",
+    calendarDays: [14]
+  },
+  {
+    id: 6,
+    title: "Farm-to-Table: Spring Harvest",
+    desc: "Start at the farm, pick your ingredients, then cook a 4-course seasonal menu with wine pairings.",
+    category: "date-night",
+    categoryLabel: "Date Night",
+    date: "Sat, Mar 14",
+    time: "5:30 PM",
+    duration: "4 hours",
+    price: 150,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=600&q=80",
+    chef: chefProfiles.marcus,
+    rating: 5.0,
+    reviews: 32,
+    spots: 3,
+    scarcity: "low",
+    calendarDays: [14]
+  },
+  {
+    id: 7,
+    title: "Leadership Kitchen: The Omakase Challenge",
+    desc: "Your executive team collaborates to create a multi-course omakase menu. Communication, delegation, and creativity under pressure.",
+    category: "corporate",
+    categoryLabel: "Corporate",
+    date: "Thu, Mar 19",
+    time: "10:00 AM",
+    duration: "6 hours",
+    price: 250,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+    chef: chefProfiles.marcus,
+    rating: 4.92,
+    reviews: 11,
+    spots: 12,
+    scarcity: null,
+    calendarDays: [19]
+  },
+  {
+    id: 8,
+    title: "Chocolate & Wine: A Sensory Journey",
+    desc: "Craft artisan truffles, temper couverture chocolate, and explore wine-chocolate pairings in an intimate candlelit setting.",
+    category: "date-night",
+    categoryLabel: "Date Night",
+    date: "Fri, Mar 20",
+    time: "7:00 PM",
+    duration: "2.5 hours",
+    price: 135,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=600&q=80",
+    chef: chefProfiles.elena,
+    rating: 4.99,
+    reviews: 53,
+    spots: 1,
+    scarcity: "hot",
+    calendarDays: [20]
   },
   {
     id: 9,
+    title: "UGA Baking Club: Weekend Takeover",
+    desc: "Exclusive 2-day baking intensive for UGA's A Pinch & a Dash. Full kitchen access, artisan techniques, and a closing bake-off.",
+    category: "university",
+    categoryLabel: "University",
+    date: "Sat\u2013Sun, Mar 21\u201322",
+    time: "9:00 AM",
+    duration: "2 days",
+    price: 650,
+    priceLabel: "flat fee",
+    image: "https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=600&q=80",
+    chef: chefProfiles.elena,
+    rating: 5.0,
+    reviews: 8,
+    spots: 0,
+    scarcity: "sold-out",
+    calendarDays: [21, 22]
+  },
+  {
+    id: 10,
     title: "Meal Prep Masterclass",
     desc: "Prep an entire week of macro-balanced meals in under 3 hours. Includes containers, labels, and a personalized macro guide.",
     category: "wellness",
     categoryLabel: "Wellness",
-    date: "Sat, Mar 22",
+    date: "Sun, Mar 22",
     time: "10:00 AM",
     duration: "3 hours",
     price: 55,
     priceLabel: "per person",
     image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
-    chef: { name: "Chef Marcus", title: "Executive Chef", avatar: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&q=80" },
+    chef: chefProfiles.ava,
     rating: 4.91,
     reviews: 22,
     spots: 7,
-    scarcity: null
+    scarcity: null,
+    calendarDays: [22]
+  },
+  {
+    id: 11,
+    title: "Culinary Fundamentals: Sauces & Stocks",
+    desc: "Build your culinary foundation with the 5 French mother sauces, bone broths, and pan sauce techniques every cook should know.",
+    category: "wellness",
+    categoryLabel: "Community",
+    date: "Thu, Mar 26",
+    time: "6:00 PM",
+    duration: "2.5 hours",
+    price: 50,
+    priceLabel: "per person",
+    image: "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=80",
+    chef: chefProfiles.jamal,
+    rating: 4.93,
+    reviews: 41,
+    spots: 10,
+    scarcity: null,
+    calendarDays: [26]
+  },
+  {
+    id: 12,
+    title: "Georgia Tech Culinary Club: Weekend Takeover",
+    desc: "Full weekend kitchen takeover for Georgia Tech's culinary society. Hands-on instruction, team challenges, and a closing dinner.",
+    category: "university",
+    categoryLabel: "University",
+    date: "Sat\u2013Sun, Mar 28\u201329",
+    time: "9:00 AM",
+    duration: "2 days",
+    price: 750,
+    priceLabel: "flat fee",
+    image: "https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600&q=80",
+    chef: chefProfiles.marcus,
+    rating: 4.96,
+    reviews: 5,
+    spots: 1,
+    scarcity: "hot",
+    calendarDays: [28, 29]
   }
 ];
 
 // ============================================================
-// RENDER CLASSES
+// RENDER CLASSES (GRID VIEW)
 // ============================================================
+let activeCategory = 'all';
+
 function renderClasses(category = 'all') {
+  activeCategory = category;
   const grid = document.getElementById('classesGrid');
   const filtered = category === 'all' ? classes : classes.filter(c => c.category === category);
 
@@ -2009,8 +2692,6 @@ function renderClasses(category = 'all') {
     const bookBtnClass = cls.scarcity === 'sold-out' ? 'card-book-btn sold-out' : 'card-book-btn';
     const bookBtnText = cls.scarcity === 'sold-out' ? 'Sold Out' : 'Book Now';
     const bookAction = cls.scarcity === 'sold-out' ? '' : `onclick="openBooking(${cls.id}); event.stopPropagation();"`;
-
-    const stars = '&#9733;'.repeat(5);
 
     return `
       <div class="class-card" style="animation: fadeUp 0.6s ease-out ${i * 0.08}s both;" onclick="if(${cls.scarcity !== 'sold-out'}) openBooking(${cls.id})">
@@ -2051,6 +2732,117 @@ function renderClasses(category = 'all') {
 }
 
 // ============================================================
+// CALENDAR VIEW
+// ============================================================
+let calendarMonth = 2; // March (0-indexed)
+let calendarYear = 2026;
+let currentView = 'grid';
+
+const categoryColors = {
+  'date-night': '#e85d4a',
+  'corporate': '#4ea3e0',
+  'university': '#9b59b6',
+  'wellness': '#4ecb71'
+};
+
+function renderCalendar() {
+  const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const container = document.getElementById('calendarDays');
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  document.getElementById('calMonthTitle').textContent = `${monthNames[calendarMonth]} ${calendarYear}`;
+
+  // Only show classes for March 2026
+  const isClassMonth = calendarMonth === 2 && calendarYear === 2026;
+
+  let html = '';
+
+  // Empty cells before 1st
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="cal-day empty"></div>';
+  }
+
+  const today = new Date();
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayClasses = isClassMonth
+      ? classes.filter(c => c.calendarDays && c.calendarDays.includes(day))
+      : [];
+
+    // Apply category filter to calendar too
+    const filteredDayClasses = activeCategory === 'all'
+      ? dayClasses
+      : dayClasses.filter(c => c.category === activeCategory);
+
+    const hasClass = filteredDayClasses.length > 0;
+    const isToday = day === today.getDate() && calendarMonth === today.getMonth() && calendarYear === today.getFullYear();
+
+    // Find first bookable class for the day click
+    const firstBookable = filteredDayClasses.find(c => c.scarcity !== 'sold-out');
+
+    let eventsHtml = '';
+    if (hasClass) {
+      eventsHtml = '<div class="cal-events">';
+      filteredDayClasses.forEach(c => {
+        const color = categoryColors[c.category] || '#c8a96e';
+        const isSoldOut = c.scarcity === 'sold-out';
+        eventsHtml += `<div class="cal-event-item" onclick="event.stopPropagation(); ${isSoldOut ? '' : 'openBooking(' + c.id + ')'}" style="${isSoldOut ? 'opacity:0.5;cursor:default;text-decoration:line-through;' : 'cursor:pointer;'}">
+          <div class="cal-event-bar" style="background:${color}"></div>
+          <span>${c.title.length > 16 ? c.title.substring(0, 16) + '\u2026' : c.title}</span>
+        </div>`;
+      });
+      eventsHtml += '</div>';
+    }
+
+    const dayClick = hasClass && firstBookable ? `onclick="openBooking(${firstBookable.id})"` : '';
+
+    html += `<div class="cal-day ${hasClass ? 'has-class' : ''} ${isToday ? 'today' : ''}" ${dayClick}>
+      <span class="cal-day-number">${day}</span>
+      ${eventsHtml}
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// Calendar navigation
+document.getElementById('calPrev').addEventListener('click', () => {
+  calendarMonth--;
+  if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+  renderCalendar();
+});
+
+document.getElementById('calNext').addEventListener('click', () => {
+  calendarMonth++;
+  if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+  renderCalendar();
+});
+
+// ============================================================
+// VIEW TOGGLE (Grid / Calendar)
+// ============================================================
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentView = btn.dataset.view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const grid = document.getElementById('classesGrid');
+    const cal = document.getElementById('calendarContainer');
+
+    if (currentView === 'grid') {
+      grid.classList.remove('hidden');
+      cal.classList.remove('active');
+    } else {
+      grid.classList.add('hidden');
+      cal.classList.add('active');
+      renderCalendar();
+    }
+  });
+});
+
+// ============================================================
 // CATEGORY TABS
 // ============================================================
 document.querySelectorAll('.category-tab').forEach(tab => {
@@ -2058,13 +2850,14 @@ document.querySelectorAll('.category-tab').forEach(tab => {
     document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     renderClasses(tab.dataset.category);
+    // Also re-render calendar if in calendar view
+    if (currentView === 'calendar') renderCalendar();
   });
 });
 
 // ============================================================
 // NAVIGATION SCROLL EFFECT
 // ============================================================
-let lastScroll = 0;
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('mainNav');
   nav.classList.toggle('scrolled', window.scrollY > 60);
@@ -2094,6 +2887,11 @@ function openBooking(classId) {
 
   // Reset upsell cards
   document.querySelectorAll('.upsell-card').forEach(card => card.classList.remove('selected'));
+
+  // Reset form inputs
+  document.getElementById('firstNameInput').value = '';
+  document.getElementById('lastNameInput').value = '';
+  document.getElementById('emailInput').value = '';
 
   // Populate panel
   document.getElementById('panelThumb').src = currentClass.image;
@@ -2188,17 +2986,88 @@ function updateOrderSummary() {
   document.getElementById('summaryTotal').textContent = `$${baseTotal + addonsTotal}`;
 }
 
-// Pay button
+// ============================================================
+// HANDLE PAY → CONFIRMATION SCREEN
+// ============================================================
 function handlePay() {
-  closeBooking();
-  const toast = document.getElementById('successToast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 4000);
+  const payBtn = document.getElementById('payBtn');
+  payBtn.textContent = 'Processing\u2026';
+  payBtn.style.pointerEvents = 'none';
+  payBtn.style.opacity = '0.7';
+
+  setTimeout(() => {
+    // Gather form data
+    const firstName = document.getElementById('firstNameInput').value || 'Guest';
+    const lastName = document.getElementById('lastNameInput').value || '';
+    const email = document.getElementById('emailInput').value || 'guest@example.com';
+    const guestName = (firstName + ' ' + lastName).trim();
+
+    // Generate confirmation number
+    const confNum = '#TK-' + Math.floor(10000 + Math.random() * 90000);
+
+    // Calculate total
+    const isFlat = currentClass.priceLabel === 'flat fee';
+    const baseTotal = isFlat ? currentClass.price : currentClass.price * guestCount;
+    let addonsTotal = 0;
+    document.querySelectorAll('.upsell-card.selected').forEach(card => {
+      const price = parseInt(card.dataset.price);
+      const qty = isFlat ? 1 : guestCount;
+      addonsTotal += price * qty;
+    });
+    const total = baseTotal + addonsTotal;
+
+    // Populate confirmation overlay
+    document.getElementById('confNumber').textContent = confNum;
+    document.getElementById('confClassName').textContent = currentClass.title;
+    document.getElementById('confDate').textContent = currentClass.date;
+    document.getElementById('confTime').textContent = currentClass.time;
+    document.getElementById('confGuests').textContent = isFlat ? '1 (Flat Fee)' : guestCount;
+    document.getElementById('confGuestName').textContent = guestName;
+    document.getElementById('confTotal').textContent = '$' + total;
+    document.getElementById('confEmail').textContent = email;
+
+    // Reset pay button
+    payBtn.textContent = 'Complete Reservation';
+    payBtn.style.pointerEvents = '';
+    payBtn.style.opacity = '';
+
+    // Close booking panel
+    closeBooking();
+
+    // Show confirmation overlay after panel animates out
+    setTimeout(() => {
+      document.getElementById('confirmationOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Also show the toast
+      const toast = document.getElementById('successToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }, 400);
+  }, 1500);
 }
 
-// Escape key closes panel
+// ============================================================
+// CLOSE CONFIRMATION
+// ============================================================
+function closeConfirmation() {
+  document.getElementById('confirmationOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+  // Scroll to classes section
+  setTimeout(() => {
+    document.getElementById('classes').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+// Escape key closes panel or confirmation
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeBooking();
+  if (e.key === 'Escape') {
+    if (document.getElementById('confirmationOverlay').classList.contains('active')) {
+      closeConfirmation();
+    } else {
+      closeBooking();
+    }
+  }
 });
 
 // ============================================================
